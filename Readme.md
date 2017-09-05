@@ -1,3 +1,22 @@
+# Forked FixedHeader version adds the following features:
+
+* Callback method when the header becomes fixed.
+* Ability to size the header to the data table wrapper instead of the table itself.
+* Disable any horizontal positioning.
+
+For example:
+
+```js
+  fixedHeader: {
+    positionVia: 'wrapper', // Position via the wrapper instead of the table
+    horizontalPos: false, // Do not adjust the horizontal positioning
+    fixedCallback: function(wrapper, fixedheader) {
+        // Will receive wrapper and fixedheader jQuery objects.
+        // Called when the header becomes fixed.
+    }
+  }
+```
+
 # FixedHeader
 
 The FixedHeader plug-in will freeze in place the header and/or footer in a DataTable, ensuring that title information will remain always visible.

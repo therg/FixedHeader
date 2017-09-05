@@ -81,7 +81,8 @@ var FixedHeader = function ( dt, config ) {
 			tfootHeight: 0,
 			theadHeight: 0,
 			windowHeight: $(window).height(),
-			visible: true
+			visible: true,
+			wrapperWidth: 0
 		},
 		headerMode: null,
 		footerMode: null,
@@ -369,6 +370,7 @@ $.extend( FixedHeader.prototype, {
 		var position = this.s.position;
 		var lastScrollLeft = this.s.scrollLeft;
 
+
 		if ( itemDom.floating && lastScrollLeft[ item ] !== scrollLeft ) {
 			itemDom.floating.css( 'left', position.left - scrollLeft );
 
@@ -439,6 +441,8 @@ $.extend( FixedHeader.prototype, {
 			if ( item === 'footer' ) {
 				itemDom.floating.css( 'top', '' );
 			}
+
+			this.c.fixedCallback($(dt.settings()[0].nTableWrapper), itemDom.floating);
 		}
 		else if ( mode === 'below' ) { // only used for the header
 			// Fix the position of the floating header at base of the table body
@@ -492,12 +496,19 @@ $.extend( FixedHeader.prototype, {
 		var tfoot = tableNode.children('tfoot');
 		var tbody = dom.tbody;
 
+		if (this.c.positionVia == 'wrapper') {
+			var posVia = $(dt.settings()[0].nTableWrapper);
+		} else {
+			var posVia = tableNode;
+		}
+
 		position.visible = tableNode.is(':visible');
-		position.width = tableNode.outerWidth();
-		position.left = tableNode.offset().left;
+		position.width = posVia.outerWidth();
+		position.left = posVia.offset().left;
 		position.theadTop = thead.offset().top;
 		position.tbodyTop = tbody.offset().top;
 		position.theadHeight = position.tbodyTop - position.theadTop;
+		//position.wrapperWidth = $(dt.settings()[0].nTableWrapper).outerWidth();
 
 		if ( tfoot.length ) {
 			position.tfootTop = tfoot.offset().top;
@@ -546,7 +557,9 @@ $.extend( FixedHeader.prototype, {
 				this._modeChange( headerMode, 'header', forceChange );
 			}
 
-			this._horizontal( 'header', windowLeft );
+			if( this.c.horizontalPos ) {
+				this._horizontal( 'header', windowLeft );
+			}
 		}
 
 		if ( this.c.footer && this.dom.tfoot.length ) {
@@ -564,7 +577,9 @@ $.extend( FixedHeader.prototype, {
 				this._modeChange( footerMode, 'footer', forceChange );
 			}
 
-			this._horizontal( 'footer', windowLeft );
+			if( this.c.horizontalPos ) {
+				this._horizontal( 'footer', windowLeft );
+			}
 		}
 	}
 } );
@@ -586,7 +601,10 @@ FixedHeader.defaults = {
 	header: true,
 	footer: false,
 	headerOffset: 0,
-	footerOffset: 0
+	footerOffset: 0,
+	positionVia: 'table',
+	horizontalPos: true,
+	fixedCallback: $.noop
 };
 
 
